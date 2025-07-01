@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import Places from "./Places.jsx";
 
 export default function AvailablePlaces({ onSelectPlace }) {
+  const [loadingState, setLoadingState] = useState([]);
   const [availablePlaces, setAvailablePlaces] = useState([]);
 
   useEffect(() => {
+    setLoadingState(true);
     fetch("http://localhost:3000/places")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
         setAvailablePlaces(data.places);
+        setLoadingState(false);
       });
   }, []);
 
@@ -29,6 +32,8 @@ export default function AvailablePlaces({ onSelectPlace }) {
     <Places
       title="Available Places"
       places={availablePlaces}
+      isLoading={loadingState}
+      loadingText={"Fetching place data..."}
       fallbackText="No places available."
       onSelectPlace={onSelectPlace}
     />
