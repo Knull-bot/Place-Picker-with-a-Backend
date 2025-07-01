@@ -14,6 +14,17 @@ export default function AvailablePlaces({ onSelectPlace }) {
       });
   }, []);
 
+  // ASYNC variant
+  // useEffect(() => {
+  //   async function fetchPlaces() {
+  //     const response = await fetch("http://localhost:3000/places");
+  //     const data = await response.json();
+  //     setAvailablePlaces(data.places);
+  //   }
+
+  //   fetchPlaces();
+  // }, []);
+
   return (
     <Places
       title="Available Places"
