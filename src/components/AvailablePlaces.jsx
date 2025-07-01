@@ -1,32 +1,49 @@
 import { useEffect, useState } from "react";
 import Places from "./Places.jsx";
+import ErrorPage from "./Error.jsx";
 
 export default function AvailablePlaces({ onSelectPlace }) {
   const [loadingState, setLoadingState] = useState([]);
   const [availablePlaces, setAvailablePlaces] = useState([]);
+  const [error, setError] = useState();
 
-  useEffect(() => {
-    setLoadingState(true);
-    fetch("http://localhost:3000/places")
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        setAvailablePlaces(data.places);
-        setLoadingState(false);
-      });
-  }, []);
+  // PROMISE VARIANT
+  // useEffect(() => {
+  //   setLoadingState(true);
+  //   fetch("http://localhost:3000/places")
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setAvailablePlaces(data.places);
+  //       setLoadingState(false);
+  //     });
+  // }, []);
 
   // ASYNC variant
-  // useEffect(() => {
-  //   async function fetchPlaces() {
-  //     const response = await fetch("http://localhost:3000/places");
-  //     const data = await response.json();
-  //     setAvailablePlaces(data.places);
-  //   }
+  useEffect(() => {
+    async function fetchPlaces() {
+      try {
+        const response = await fetch("http://localhost:3000/places");
+        if (!response.ok) {
+          throw new Error("Failed to fetch places.");
+        }
+        const data = await response.json();
+        setAvailablePlaces(data.places);
+      } catch (error) {
+        setError({
+          message: "Could not fetch places, please try again later.",
+        });
+      }
+      setLoadingState(false);
+    }
 
-  //   fetchPlaces();
-  // }, []);
+    fetchPlaces();
+  }, []);
+
+  if (error) {
+    return <ErrorPage title={"An error ocured!"} message={error.message} />;
+  }
 
   return (
     <Places
